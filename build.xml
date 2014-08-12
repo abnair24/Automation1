@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Automation" default="clean" basedir=".">
+<project name="Automation" default="run" basedir=".">
  	<property name="src.dir" value="${basedir}/src" />
  	<property name="build.dir" value="${basedir}/build" />
  	<property name="lib.dir" value="${basedir}/lib" />
@@ -51,40 +51,6 @@
 		</testng>
 	</target>
 	
-	<target name="jar">
-			<jar basedir="bin" destfile="build/${project-name}.jar">
-				<manifest>
-					<attribute name="Built-By" value="${builder}" />
-					<attribute name="Built-On" value="${build-info.current-date}" />
-					<attribute name="Built-At" value="${build-info.current-time}" />
-				</manifest>
-			</jar>
-	</target>
 	
-	<target name="build-jar">
-			<antcall target="compile-jar-classes" />
-			<antcall target="clean-jar" />
-			<antcall target="jar" />
-	</target>
-	
-	<target name="testng-xslt-report" depends="run">
-		<delete dir="${basedir}/testng-xslt">
-	    </delete>
-	    <mkdir dir="${basedir}/testng-xslt">
-	    </mkdir>
-	    <echo message="Generating XSLT report..."/>
-	    <xslt in="${basedir}/Reports/testng-results.xml" style="${basedir}/testng-results.xsl" out="${basedir}/testng-xslt/index.html">
-	                    <param expression="${basedir}/testng-xslt/" name="testNgXslt.outputDir" />
-	                    <param expression="true" name="testNgXslt.sortTestCaseLinks" />
-	                    <param expression="FAIL,SKIP,PASS,CONF,BY_CLASS" name="testNgXslt.testDetailsFilter" />
-	                    <param expression="true" name="testNgXslt.showRuntimeTotals" />
-	                    <classpath refid="classpath_jars">
-	                    </classpath>
-	    </xslt>
-	                <echo message="XSLT report generated"/>
-	    </target>
-	
-	<target name="start" depends="run,testng-xslt-report">
-	</target>
 	
 </project>
