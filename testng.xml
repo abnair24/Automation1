@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Functional" parallel="none">
+  <test name="Registration" preserve-order="true">
+    <classes preserve-order="true">
+      <class name="com.testScripts.DragAndDropTest"/>
+      <class name="com.testScripts.CookieTest"/>
+      <class name="com.testScripts.RegistrationPageTest"/>
+      	<methods>
+      		<include name="registrationTest"/>
+      		<!--
+      			<exclude name= "cookieTest"/>
+      		-->
+      	</methods>
+    </classes>
+  </test> <!--Registration Test -->
+</suite> <!-- Functional Suite -->

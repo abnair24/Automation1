@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Automation" default="clean" basedir=".">
+ 	<property name="src.dir" value="${basedir}/src" />
+ 	<property name="build.dir" value="${basedir}/build" />
+ 	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="testng-xslt.dir" value="${basedir}/testng-xslt"/>
+	<property name="test-output.dir" value="${basedir}/test-output"/>
+	<property name="Reports.dir" value="${basedir}/Reports"/>
+	<property name="Output.dir" value="${basedir}/Output"/>
+	
+ 	 
+	<target name="setClassPath">
+		<path id="classpath_jars">
+			<pathelement path="${basedir}/"/>
+			<fileset dir="${lib.dir}" includes="*.jar"/>
+		</path>
+		<pathconvert pathsep=":" property="test.classpath" refid="classpath_jars"/>
+	</target>
+	
+	<target name="loadTestNG" depends="setClassPath">
+		<taskdef resource="testngtasks" classpath="${test.classpath}"/>
+	</target>
+	
+	<target name="init">
+		<mkdir dir="${build.dir}"/>
+	</target>
+	
+	<target name="clean" description="Remove previous">
+		<delete dir = "${build.dir}" />
+		<delete dir= "${testng-xslt.dir}"/>
+		<delete dir="${test-output.dir}"/>
+	    <delete dir="${Reports.dir}"/>
+		
+	</target>
+	
+	<target name="compile" depends="clean,init,setClassPath,loadTestNG" description="compile whole project">
+		<echo message="classpath:${test.classpath}"/>
+		<echo message="compiling... "/>
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpath="${test.classpath}" />
+	<!--
+	 <mkdir dir="${build.dir}/com/core/uimap" />
+		<copy todir="${build.dir}/com/core/uimap">
+		  <fileset dir ="${uimap.dir}" />
+		</copy> 
+	-->
+	</target>	
+
+	<target name="run" depends="compile">
+		<testng classpath="${test.classpath}:${build.dir}">
+			<xmlfileset dir="${basedir}" includes="testng.xml"/>
+		</testng>
+	</target>
+	
+	<target name="jar">
+			<jar basedir="bin" destfile="build/${project-name}.jar">
+				<manifest>
+					<attribute name="Built-By" value="${builder}" />
+					<attribute name="Built-On" value="${build-info.current-date}" />
+					<attribute name="Built-At" value="${build-info.current-time}" />
+				</manifest>
+			</jar>
+	</target>
+	
+	<target name="build-jar">
+			<antcall target="compile-jar-classes" />
+			<antcall target="clean-jar" />
+			<antcall target="jar" />
+	</target>
+	
+	<target name="testng-xslt-report" depends="run">
+		<delete dir="${basedir}/testng-xslt">
+	    </delete>
+	    <mkdir dir="${basedir}/testng-xslt">
+	    </mkdir>
+	    <echo message="Generating XSLT report..."/>
+	    <xslt in="${basedir}/Reports/testng-results.xml" style="${basedir}/testng-results.xsl" out="${basedir}/testng-xslt/index.html">
+	                    <param expression="${basedir}/testng-xslt/" name="testNgXslt.outputDir" />
+	                    <param expression="true" name="testNgXslt.sortTestCaseLinks" />
+	                    <param expression="FAIL,SKIP,PASS,CONF,BY_CLASS" name="testNgXslt.testDetailsFilter" />
+	                    <param expression="true" name="testNgXslt.showRuntimeTotals" />
+	                    <classpath refid="classpath_jars">
+	                    </classpath>
+	    </xslt>
+	                <echo message="XSLT report generated"/>
+	    </target>
+	
+	<target name="start" depends="run,testng-xslt-report">
+	</target>
+	
+</project>
