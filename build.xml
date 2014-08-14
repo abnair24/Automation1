@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Automation" default="run" basedir=".">
+<project name="Automation" default="All" basedir=".">
  	<property name="src.dir" value="${basedir}/src" />
  	<property name="build.dir" value="${basedir}/build" />
  	<property name="lib.dir" value="${basedir}/lib" />
@@ -7,6 +7,7 @@
 	<property name="test-output.dir" value="${basedir}/test-output"/>
 	<property name="Reports.dir" value="${basedir}/Reports"/>
 	<property name="Output.dir" value="${basedir}/Output"/>
+	<property name="testng-xslt" value="${basedir}/testng-xslt"/>
 	
  	 
 	<target name="setClassPath">
@@ -30,6 +31,7 @@
 		<delete dir= "${testng-xslt.dir}"/>
 		<delete dir="${test-output.dir}"/>
 	    <delete dir="${Reports.dir}"/>
+		<delete dir="${testng-xslt}"/>
 		
 	</target>
 	
@@ -51,6 +53,25 @@
 		</testng>
 	</target>
 	
+	<target name="Reports" depends="run">
+	        <mkdir dir="${basedir}/testng-xslt"/>
+	        <xslt in="${basedir}/test-output/testng-results.xml" style="${basedir}/testng-results.xsl" 
+	        	out="${basedir}/testng-xslt/index.html" classpathref="classpath_jars">
+	        	
+	            <param expression="${basedir}/testng-xslt/" name="testNgXslt.outputDir" />
+	 
+	            <param expression="true" name="testNgXslt.sortTestCaseLinks" />
+	 
+	            <param expression="FAIL,SKIP,PASS,CONF,BY_CLASS" name="testNgXslt.testDetailsFilter" />
+	 
+	            <param expression="true" name="testNgXslt.showRuntimeTotals" />
+	 
+	           
+	        </xslt>
+	</target>
+	
+	<target name="All" depends="Reports">
+		</target>
 	
 	
 </project>
